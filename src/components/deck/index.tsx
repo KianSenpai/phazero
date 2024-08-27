@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Card from '../../components/card'
 
 const generateCards = (): string[] => {
@@ -27,6 +27,7 @@ export default function Deck() {
     const initialDeck = useMemo(generateCards, [])
     const [deck, setDeck] = useState<string[]>(initialDeck)
     const [topCards, setTopCards] = useState<string[]>([])
+    const [intervalId, setIntervalId] = useState<number | null>(null)
 
     const shuffleDeck = () => {
         const shuffledDeck = shuffle(deck)
@@ -38,6 +39,28 @@ export default function Deck() {
         setDeck(initialDeck)
         setTopCards([])
     }
+
+    const autoShuffle = () => {
+        if (!intervalId) {
+            shuffleDeck()
+            const id = setInterval(() => {
+                shuffleDeck()
+            }, 3000)
+
+            setIntervalId(id)
+        } else {
+            clearInterval(intervalId)
+            setIntervalId(null)
+        }
+    }
+
+    useEffect(() => {
+        return () => {
+            if (intervalId) {
+                clearInterval(intervalId)
+            }
+        }
+    }, [intervalId])
 
     return (
         <div className="flex flex-col items-center gap-6 border border-slate-200 p-4">
@@ -60,6 +83,12 @@ export default function Deck() {
                     className="rounded border border-slate-300 bg-slate-100 px-2 py-1"
                 >
                     Shuffle and Draw!
+                </button>
+                <button
+                    onClick={autoShuffle}
+                    className="rounded border border-slate-300 bg-slate-100 px-2 py-1"
+                >
+                    {intervalId ? 'STOP' : 'Shuffle and Draw every 5 seconds!'}
                 </button>
                 <button
                     disabled={topCards.length === 0}

@@ -6,6 +6,7 @@ export default function Home() {
     const changeDeckCount = () => {
         setDeckCount(deckCount + 1)
     }
+
     return (
         <>
             <div className="flex flex-col gap-4 p-8">
