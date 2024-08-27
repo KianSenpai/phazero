@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import Card from '../../components/card'
 
+interface DeckProps {
+    isShuffled: boolean
+}
+
 const generateCards = (): string[] => {
     const cards = []
     for (let i = 0; i < 4; i++) {
@@ -23,7 +27,7 @@ const shuffle = (array: string[]): string[] => {
     return shuffledArray
 }
 
-export default function Deck() {
+export default function Deck({ isShuffled }: DeckProps) {
     const initialDeck = useMemo(generateCards, [])
     const [deck, setDeck] = useState<string[]>(initialDeck)
     const [topCards, setTopCards] = useState<string[]>([])
@@ -61,6 +65,8 @@ export default function Deck() {
             }
         }
     }, [intervalId])
+
+    useEffect(() => shuffleDeck(), [isShuffled])
 
     return (
         <div className="flex flex-col items-center gap-6 border border-slate-200 p-4">
