@@ -50,11 +50,13 @@ export default function Deck() {
     }
 
     return (
-        <div className="flex flex-col gap-6">
-            <div className="flex gap-2">
-                {isShuffled && topCards?.map((card) => <span>{card}</span>)}
+        <div className="flex flex-col items-center gap-6 border border-slate-200 p-4">
+            <div
+                className={`${isShuffled ? 'flex' : 'hidden'} justify-center gap-2 border-b border-slate-300 pb-6`}
+            >
+                {isShuffled && topCards?.map((card) => <Card code={card} />)}
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap justify-center gap-2">
                 {deck.map((card, index) => (
                     <div
                         className={isShuffled && index < 5 ? 'hidden' : 'block'}
@@ -63,17 +65,17 @@ export default function Deck() {
                     </div>
                 ))}
             </div>
-            <div className="flex gap-4">
+            <div className="flex w-fit gap-4">
                 <button
                     onClick={shuffleDeck}
-                    className="rounded border border-slate-500 bg-slate-400 px-2 py-1"
+                    className="rounded border border-slate-300 bg-slate-100 px-2 py-1"
                 >
                     Shuffle and Draw!
                 </button>
                 <button
                     disabled={!isShuffled}
                     onClick={returnOriginalDeck}
-                    className="rounded border border-slate-500 bg-slate-400 px-2 py-1"
+                    className="rounded border border-slate-300 bg-slate-100 px-2 py-1"
                 >
                     Original Deck
                 </button>
