@@ -1,42 +1,23 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Card from '../../components/card'
+import { shuffleFunction } from '../../utils'
 
 interface DeckProps {
-    isShuffled: boolean
+    initialDeck: string[]
+    isShuffled: boolean | undefined
+    id: string
 }
 
-const generateCards = (): string[] => {
-    const cards = []
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 13; j++) {
-            cards.push(`${i}-${j}`)
-        }
-    }
-    return cards
-}
-
-const shuffle = (array: string[]): string[] => {
-    const shuffledArray = array.slice()
-    for (let i = shuffledArray.length - 1; i > 0; i--) {
-        const randomIndex = Math.floor(Math.random() * (i + 1))
-        ;[shuffledArray[i], shuffledArray[randomIndex]] = [
-            shuffledArray[randomIndex],
-            shuffledArray[i],
-        ]
-    }
-    return shuffledArray
-}
-
-export default function Deck({ isShuffled }: DeckProps) {
-    const initialDeck = useMemo(generateCards, [])
+export default function Deck({ initialDeck, isShuffled, id }: DeckProps) {
     const [deck, setDeck] = useState<string[]>(initialDeck)
     const [topCards, setTopCards] = useState<string[]>([])
     const [intervalId, setIntervalId] = useState<number | null>(null)
 
     const shuffleDeck = () => {
-        const shuffledDeck = shuffle(deck)
+        const shuffledDeck = shuffleFunction(deck)
         setDeck(shuffledDeck)
         setTopCards(shuffledDeck.slice(0, 5))
+        localStorage.setItem(`${id}`, JSON.stringify(shuffledDeck))
     }
 
     const returnOriginalDeck = () => {
@@ -66,7 +47,20 @@ export default function Deck({ isShuffled }: DeckProps) {
         }
     }, [intervalId])
 
-    useEffect(() => shuffleDeck(), [isShuffled])
+    useEffect(() => {
+        const oldDeck = localStorage.getItem(`${id}`)
+
+        if (oldDeck && oldDeck.length) {
+            setDeck(JSON.parse(oldDeck))
+            setTopCards(JSON.parse(oldDeck).slice(0, 5))
+        }
+    }, [])
+
+    useEffect(() => {
+        if (isShuffled !== undefined) {
+            shuffleDeck()
+        }
+    }, [isShuffled])
 
     return (
         <div className="flex flex-col items-center gap-6 border border-slate-200 p-4">
