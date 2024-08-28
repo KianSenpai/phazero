@@ -23,6 +23,7 @@ export default function Deck({ initialDeck, isShuffled, id }: DeckProps) {
     const returnOriginalDeck = () => {
         setDeck(initialDeck)
         setTopCards([])
+        localStorage.setItem(`${id}`, '')
     }
 
     const autoShuffle = () => {
